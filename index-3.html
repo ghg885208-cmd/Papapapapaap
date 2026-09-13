@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Master AI</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="app" id="appRoot">
+
+  <!-- ===== Drawer ===== -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <span class="brand">MASTER AI</span>
+      <button class="icon-btn" id="drawerClose">&times;</button>
+    </div>
+    <button class="new-session-btn" id="newSessionBtn">+ New Session</button>
+    <div class="drawer-nav" id="historyList"></div>
+    <div class="drawer-toggle-row">
+      <span>Amaterasu theme</span>
+      <label class="switch">
+        <input type="checkbox" id="drawerOverride" />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <button class="icon-btn" id="menuBtn">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <h1 class="topbar-title">MASTER AI</h1>
+    <button class="icon-btn" id="moreBtn">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+    </button>
+  </header>
+
+  <div class="status-row">
+    <div class="status-pill" id="statusPill">
+      <span class="status-dot"></span>
+      <span id="statusText">NO API CONFIGURED</span>
+    </div>
+  </div>
+
+  <main class="screens">
+
+    <!-- HOME / CHAT -->
+    <section class="screen active" id="screen-home">
+      <div class="chat-log" id="chatLog"></div>
+
+      <div class="attach-preview hidden" id="attachPreview">
+        <img id="attachThumb" alt="attachment" />
+        <button id="removeAttach">&times;</button>
+      </div>
+
+      <div class="composer">
+        <button class="icon-btn small" id="attachBtn" title="Attach image">+</button>
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" />
+        <button class="icon-btn small" id="dictateBtn" title="Voice to text">
+          <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
+        </button>
+        <button class="icon-btn small" id="liveBtn" title="Master Live">
+          <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/></svg>
+        </button>
+        <button class="icon-btn small send" id="sendBtn" title="Send">
+          <svg viewBox="0 0 24 24"><path d="M3 12l18-8-8 18-2-8-8-2z"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- VISION -->
+    <section class="screen" id="screen-vision">
+      <div class="vision-wrap">
+        <div class="camera-frame">
+          <video id="cameraVideo" autoplay playsinline muted></video>
+          <canvas id="cameraCanvas" hidden></canvas>
+          <div class="camera-off" id="cameraOff">
+            <svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            <p>Camera is off</p>
+          </div>
+        </div>
+        <div class="camera-controls">
+          <button class="pill-btn" id="startCamBtn">Start Camera</button>
+          <button class="pill-btn ghost" id="flipCamBtn" disabled>Flip</button>
+          <button class="pill-btn ghost" id="stopCamBtn" disabled>Stop</button>
+        </div>
+        <div class="vision-ask-row">
+          <input type="text" id="visionQuestion" placeholder="What do you want to know about this frame?" />
+          <button class="pill-btn" id="askVisionBtn" disabled>Ask</button>
+        </div>
+        <div class="vision-answer" id="visionAnswer"></div>
+      </div>
+    </section>
+
+    <!-- FLOW (visual reference only — not wired to a real automation backend) -->
+    <section class="screen" id="screen-flow">
+      <div class="flow-header">
+        <div>
+          <div class="flow-crumb">Design reference</div>
+          <div class="flow-name">Automation Flow (preview)</div>
+        </div>
+      </div>
+      <div class="canvas">
+        <svg class="flow-lines" viewBox="0 0 1000 900">
+          <path d="M120 140 L120 240" class="flow-line"/>
+          <path d="M320 280 L470 280" class="flow-line"/>
+        </svg>
+        <div class="node trigger" style="top:100px;left:40px;">
+          <div class="node-icon clock">&#9200;</div>
+          <div><div class="node-title">Schedule</div><div class="node-type">TRIGGER</div></div>
+        </div>
+        <div class="node report" style="top:240px;left:40px;">
+          <div class="node-icon report-i">&lt;/&gt;</div>
+          <div><div class="node-title">Report</div><div class="node-type">REPORT</div></div>
+        </div>
+        <div class="node llm" style="top:220px;left:470px;">
+          <div class="node-icon brain">&#129504;</div>
+          <div><div class="node-title">AI step</div><div class="node-type">LLM</div></div>
+        </div>
+      </div>
+      <p class="flow-note">This tab is a visual mock — wiring it to a real scheduler/automation engine needs a server, which a static 3-file web app doesn't have.</p>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="screen" id="screen-settings">
+      <div class="settings-scroll">
+
+        <div class="card toggle-card">
+          <div>
+            <div class="card-title">Amaterasu theme</div>
+            <div class="card-sub">Cosmetic red/glitch skin only — does not change any safety behavior</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="overrideToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="card toggle-card">
+          <div>
+            <div class="card-title">Focus nudge</div>
+            <div class="card-sub">When you switch away from THIS tab and come back, get a gentle nudge. Can't see other apps.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="focusNudgeToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="card apis-card">
+          <div class="apis-head">
+            <span class="card-title">AI APIs</span>
+            <button class="add-api-btn" id="addApiBtn">+ Add API</button>
+          </div>
+          <div id="apiEmpty" class="api-empty">No APIs yet. Tap "Add API" to add one.</div>
+          <div id="apiList"></div>
+
+          <div class="new-api-form hidden" id="newApiForm">
+            <div class="new-api-head">
+              <span>NEW API</span>
+              <button class="icon-btn" id="closeApiForm">&times;</button>
+            </div>
+            <input type="text" id="apiName" placeholder="Name (e.g. My Gemini)" />
+            <select id="apiProvider">
+              <option value="gemini">Gemini (Google)</option>
+              <option value="openai">OpenAI (GPT)</option>
+              <option value="anthropic">Anthropic (Claude)</option>
+              <option value="custom">Custom (OpenAI-compatible)</option>
+            </select>
+            <input type="password" id="apiKey" placeholder="API Key" />
+            <input type="text" id="apiEndpoint" placeholder="Endpoint (only for Custom, e.g. https://api.groq.com/openai/v1)" />
+            <input type="text" id="apiModel" placeholder="Model" />
+            <input type="text" id="apiCategory" placeholder="Purpose (e.g. general, coding)" value="general" />
+            <textarea id="apiPrompt" placeholder="System prompt / role (optional)"></textarea>
+            <div class="test-result" id="testResult"></div>
+            <div class="new-api-actions">
+              <button class="test-btn" id="testApiBtn">&#9889; Test</button>
+              <button class="save-api-btn" id="saveApiBtn">Save API</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:8px;">About this build</div>
+          <p class="about-text">Camera, mic, live-mode interrupt, image attachments and cross-chat memory in this app are real and run in your browser with your own API key. There's no server: keys live only in this browser's local storage. See README for what was deliberately left out and why.</p>
+        </div>
+
+        <div class="footer-tag">MASTER AI &middot; v2.0</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== Master Live overlay ===== -->
+  <div class="live-overlay" id="liveOverlay">
+    <div class="live-top">
+      <button class="icon-btn" id="liveClose">&times;</button>
+      <span>MASTER LIVE</span>
+      <span style="width:38px;"></span>
+    </div>
+    <div class="live-orb-wrap">
+      <div class="live-orb" id="liveOrb"></div>
+    </div>
+    <div class="live-transcript" id="liveTranscript"></div>
+    <div class="live-hint" id="liveHint">TAP MIC TO START</div>
+    <button class="stop-interrupt hidden" id="stopInterruptBtn">STOP</button>
+    <button class="mic-big" id="micBig">
+      <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>
+    </button>
+  </div>
+
+  <!-- ===== Bottom nav ===== -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="home">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      HOME
+    </button>
+    <button class="nav-item" data-tab="vision">
+      <svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+      VISION
+    </button>
+    <button class="nav-item" data-tab="flow">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg>
+      FLOW
+    </button>
+    <button class="nav-item" data-tab="settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.2-1.6l2-1.6-2-3.4-2.4 1a7 7 0 00-2.8-1.6L13.2 2h-2.4l-.4 2.8A7 7 0 007.6 6.4l-2.4-1-2 3.4 2 1.6A7 7 0 005 12c0 .5 0 1 .2 1.6l-2 1.6 2 3.4 2.4-1a7 7 0 002.8 1.6l.4 2.8h2.4l.4-2.8a7 7 0 002.8-1.6l2.4 1 2-3.4-2-1.6c.2-.6.2-1.1.2-1.6z"/></svg>
+      SETTINGS
+    </button>
+  </nav>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
